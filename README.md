@@ -30,7 +30,7 @@ Azure SQL Database → Fabric Lakehouse (bronze → silver → gold) → Power B
 semantic model → Purview governance layer (catalogue, glossary,
 classification, data quality, CDE and issue registers).
 
-![ER Diagram](./phase-1-data-design/ER-diagram.png)
+![ER Diagram](./Phase-1-data-design/ER-diagram.png)
 
 ## How the governance actually works, end to end
 
