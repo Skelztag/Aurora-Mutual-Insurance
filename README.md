@@ -3,47 +3,26 @@
 **A fictional UK insurer, built end-to-end to demonstrate Microsoft Fabric and
 Microsoft Purview data governance skills.**
 
+**What I demonstrated:** Microsoft Fabric · Microsoft Purview · Data Quality
+· Metadata Management · Data Catalogue · Business Glossary · Critical Data
+Elements (CDE) Management · Data Issue Management · RBAC · Dynamic Data
+Masking · Power BI Governance · SQL · PySpark
+
 📄 [Read the full case study](./case-study.md) — what got built, what went
 wrong along the way, and what it taught me.
 
 ---
 
-## What this is
+## The problem, in one paragraph
 
-A full data governance and analytics build, from raw SQL through to a
-governed, catalogued, quality-scored Microsoft Fabric/Purview platform, with
-a governed Power BI semantic model reporting on top of it. Not a tutorial
-I followed, every deliverable here was designed, built, tested, and in
-several places debugged against real platform behaviour, documented as it
-actually happened rather than cleaned up afterward.
-
-## A few things worth knowing before you dig in
-
-- **Six data quality issues were planted on purpose**, and Purview's data
-  quality rules caught them with results matching the design almost exactly
-  (39 malformed postcodes, 5 illogical dates, 158 casing variants, all exact
-  matches)
-- **Getting Purview to scan the Fabric Lakehouse properly took a genuine
-  multi-hour permission chain** — tenant admin roles, a legitimate Microsoft
-  Entra domain takeover, security group scoping, and a workspace-role fix
-  found through Microsoft's own docs rather than trial and error. [Full story
-  here](./case-study.md#where-it-actually-got-hard)
-- **Two relationship bugs in the Power BI model got found by checking every
-  chart against a number I already knew**, not by assuming a chart that
-  rendered without error was correct — including one bug that silently made
-  two dimension tables filter backwards
-- **The governance documentation phase includes a Critical Data Elements
-  register, a data issue lifecycle register, and a Governance KPI dashboard**
-  built on real, queryable Fabric tables. Every proposed metric got checked
-  for whether it was honestly computable before it got built, and one
-  ("quality trend by domain") got dropped rather than faked from one data
-  point
-- **RBAC and Dynamic Data Masking are implemented and validated** with three
-  genuinely separate, independently authenticated SQL logins, not simulated
-  impersonation — full access, partial masking, and outright denial, each
-  working exactly as designed
-- **The limitations are documented on purpose.** A 143% Loss Ratio, a couple
-  of lineage gaps, a missing DAX measure — named clearly rather than hidden
+Most data governance portfolios are either pure documentation (a glossary and
+some policy PDFs with no real data behind them) or a tutorial someone else's
+dataset walked me through. Neither really shows what the job is like: judging
+systems you didn't build, using tools that don't always cooperate, in
+organisations where you don't control every permission. So I built a complete
+insurance data platform from raw SQL through to a governed, catalogued,
+quality-scored Fabric/Purview implementation, with a Power BI layer reporting
+on top. Independently. Including the parts that went wrong.
 
 ## Architecture
 
@@ -52,6 +31,40 @@ semantic model → Purview governance layer (catalogue, glossary,
 classification, data quality, CDE and issue registers).
 
 ![ER Diagram](./phase-1-data-design/er-diagram.png)
+
+## How the governance actually works, end to end
+
+![Data Governance Lifecycle](./governance-lifecycle-diagram.png)
+
+Every stage above is a real, working part of this project, not a slide. Source
+data lands in the Fabric Lakehouse and gets scanned into Purview's catalogue.
+Fields get classified for sensitivity, the ones that matter most get flagged
+as Critical Data Elements, quality rules run against them, failures become
+tracked issues with a named owner and steward, remediation happens where a
+clear low-risk fix exists, controls get validated (the RBAC/masking work is
+tested with three separately-authenticated logins, not assumed correct), and
+the whole thing rolls up into a Governance KPI dashboard.
+
+## Key outcomes
+
+- 6 deliberately-planted data quality issues, detected by Purview with results
+  matching the design exactly (39 malformed postcodes, 5 illogical dates, 158
+  casing variants - all exact matches)
+- A genuine multi-hour Fabric/Purview permission diagnosis, resolved through
+  correct root-cause reasoning rather than trial and error -[full story
+  here](./case-study.md#where-it-actually-got-hard)
+- Two relationship bugs in the Power BI model found by checking every chart
+  against a number I already knew, not by trusting a chart that rendered
+  without error
+- RBAC and Dynamic Data Masking implemented and validated with three
+  genuinely separate, independently authenticated SQL logins
+- A Critical Data Elements register, a full issue lifecycle register, and a
+  Governance KPI dashboard, all on real queryable Fabric tables — with one
+  proposed metric dropped rather than faked from a single data point
+- Limitations documented on purpose: a 143% Loss Ratio, a couple of lineage
+  gaps, a missing DAX measure - named clearly, not hidden
+
+---
 
 ## What's in each folder
 
@@ -75,4 +88,3 @@ T-SQL
 ## About
 
 Built by Skelly Tagbajumi as a portfolio project targeting Data Management Analyst | Data Governance Analyst | Data Quality Analyst | Data Management Specialist | Metadata Analyst
-
