@@ -1,0 +1,7 @@
+fact_id,fact_name,numerator,denominator,coverage_pct,description
+FACT-01,Catalogue Coverage,6,6,100.0,All 6 gold-layer tables confirmed scanned and visible in Purview
+FACT-02,Glossary Term Publication,8,8,100.0,All 8 business glossary terms published in the Enterprise Glossary
+FACT-03,Glossary Term-to-Column Linkage,4,8,50.0,Attribute-level terms linked to a physical column or table (Sum Insured Claim Status Mutual Rewards Policyholder); the remaining 4 are calculated measures with no single source column
+FACT-04,PII Classification Label Coverage,7,9,77.8,Of 9 fields classified High or Medium sensitivity 7 have a live Purview classification label applied (date_of_birth address_line1 postcode email phone_number first_name last_name); address_line2 and marketing_consent_flag remain unlabelled
+FACT-05,Workspace-Level Lineage Rendering,1,1,100.0,Lakehouse to SQL analytics endpoint lineage confirmed rendering correctly in Purview
+FACT-06,Table-Level Lineage Rendering,0,1,0.0,Bronze-to-silver-to-gold table lineage not rendered; Fabric does not automatically trace PySpark notebook transformations the way it does native pipeline Copy activities

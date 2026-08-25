@@ -65,11 +65,17 @@ governance activities, often owned by different teams in practice.
 | Medium | Compliance & DPO, Underwriting | Claims, Actuarial, Finance |
 | Low / None | All roles | — |
 
-**Scope note:** this project's focus was on classification and cataloguing as
-the descriptive foundation access controls would build on. Enforcement
-mechanisms (database roles, dynamic data masking, row/column-level security)
-were considered as a follow-on step but are out of scope for this build. See
-the project case study for further discussion of this boundary.
+**Implementation status: implemented and validated.** Role-based access
+control and Dynamic Data Masking were implemented against the source Azure
+SQL Database (`access-control-implementation.sql`) — five database roles
+matching the org chart, table-level `GRANT`s (Claims has no access to
+`dim_customer` at all, not even masked), and Dynamic Data Masking on the
+High/Medium sensitivity columns with `UNMASK` granted selectively per the
+table above. Validated with three genuinely separate, independently
+authenticated SQL logins (not simulated impersonation): Compliance & DPO saw
+fully unmasked data; Underwriting saw names/email/phone in the clear but
+`date_of_birth`/`postcode` masked; Claims was denied `SELECT` on
+`dim_customer` outright. All three matched the intended policy exactly.
 
 ---
 

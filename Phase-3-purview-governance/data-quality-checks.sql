@@ -97,3 +97,38 @@ SELECT
   SUM(CASE WHEN claim_amount > 0 THEN 1 ELSE 0 END) AS pass_count,
   SUM(CASE WHEN claim_amount <= 0 THEN 1 ELSE 0 END) AS fail_count
 FROM bronze_fact_claims;
+
+-- Rule 9: CDE-02 — date_of_birth should be a plausible adult age (18-100)
+SELECT
+  COUNT(*) AS total_rows,
+  SUM(CASE WHEN DATEDIFF(YEAR, date_of_birth, GETDATE()) BETWEEN 18 AND 100 THEN 1 ELSE 0 END) AS pass_count,
+  SUM(CASE WHEN DATEDIFF(YEAR, date_of_birth, GETDATE()) NOT BETWEEN 18 AND 100 THEN 1 ELSE 0 END) AS fail_count
+FROM bronze_dim_customer;
+
+-- Rule 10: CDE-04 — annual_premium must be positive
+SELECT
+  COUNT(*) AS total_rows,
+  SUM(CASE WHEN annual_premium > 0 THEN 1 ELSE 0 END) AS pass_count,
+  SUM(CASE WHEN annual_premium <= 0 THEN 1 ELSE 0 END) AS fail_count
+FROM bronze_dim_policy;
+
+-- Rule 11: CDE-05 — status must be one of the three valid values
+SELECT
+  COUNT(*) AS total_rows,
+  SUM(CASE WHEN status IN ('Active', 'Lapsed', 'Cancelled') THEN 1 ELSE 0 END) AS pass_count,
+  SUM(CASE WHEN status NOT IN ('Active', 'Lapsed', 'Cancelled') THEN 1 ELSE 0 END) AS fail_count
+FROM bronze_dim_policy;
+
+-- Rule 12: CDE-06 — policy_start_date must be before policy_end_date
+SELECT
+  COUNT(*) AS total_rows,
+  SUM(CASE WHEN policy_start_date < policy_end_date THEN 1 ELSE 0 END) AS pass_count,
+  SUM(CASE WHEN policy_start_date >= policy_end_date THEN 1 ELSE 0 END) AS fail_count
+FROM bronze_dim_policy;
+
+-- Rule 13: CDE-08 — claim_status must be one of the four valid values
+SELECT
+  COUNT(*) AS total_rows,
+  SUM(CASE WHEN claim_status IN ('Open', 'Approved', 'Rejected', 'Paid') THEN 1 ELSE 0 END) AS pass_count,
+  SUM(CASE WHEN claim_status NOT IN ('Open', 'Approved', 'Rejected', 'Paid') THEN 1 ELSE 0 END) AS fail_count
+FROM bronze_fact_claims;

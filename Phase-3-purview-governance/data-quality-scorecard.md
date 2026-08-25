@@ -9,18 +9,25 @@
 
 ## Results
 
-| # | Dimension | Rule | Layer | Result | Status |
-|---|---|---|---|---|---|
-| 1 | Completeness | Email should not be null | Bronze | 95.57% pass | ✅ Known issue — matches ~5% planted missing rate |
-| 2 | Completeness | Phone number should not be null | Bronze | 95.03% pass | ✅ Known issue — matches ~5% planted missing rate |
-| 3 | Validity | Postcode should match UK format | Bronze | 39 failures (98.73% pass) | ✅ Known issue — exact match to independently verified generator output |
-| 4a | Uniqueness | No duplicate customers (DOB + postcode) | Bronze | 60 duplicate rows (1.96%) | ✅ Known issue — matches planted ~2% duplicate rate |
-| 4b | Uniqueness | No duplicate customers (DOB + postcode) | **Gold** | **0 duplicates** | ✅ **Resolved** — Phase 2 silver dedup confirmed working end-to-end |
-| 5 | Referential integrity | Every claim must reference a valid policy | Bronze | 99% pass (8 orphaned) | ✅ Known issue — matches planted ~1% orphan rate exactly |
-| 6 | Validity | Settled date must not precede incurred date | Bronze | 5 illogical rows | ✅ Known issue — exact match to planted count |
-| 7a | Consistency | Customer segment should be standardized | Bronze | 158 failures (94.84% pass) | ✅ Known issue — exact match to generator's casing-variant count |
-| 7b | Consistency | Customer segment should be standardized | **Gold** | **0 failures (100% pass)** | ✅ **Resolved** — Phase 2 `initcap()` standardization confirmed working |
-| 8 | Validity | Claim amount must be positive | Bronze | 0 failures (100% pass) | ✅ Pass — baseline sanity check, not a planted issue |
+Targets are set per the Critical Data Elements in `cde-register.md` where a CDE
+exists for the field; otherwise a standard default threshold is applied
+(≥99% for Validity/Referential Integrity rules, 100% for zero-tolerance
+checks like illogical dates). A rule **breaches** when the actual result falls
+below its target — breach status is independent of whether the issue is
+"known" or planted; a known issue can still be a real, tracked breach.
+
+| # | Dimension | Rule | Layer | Target | Actual | Breach? | CDE | Owner |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Completeness | Email should not be null | Bronze | ≥98% | 95.57% | ⚠️ Yes | CDE-03 | Compliance & DPO |
+| 2 | Completeness | Phone number should not be null | Bronze | ≥98% | 95.03% | ⚠️ Yes | — | Compliance & DPO |
+| 3 | Validity | Postcode should match UK format | Bronze | ≥99% | 98.73% | ⚠️ Yes | CDE-01 | Compliance & DPO |
+| 4a | Uniqueness | No duplicate customers (DOB + postcode) | Bronze | 100% unique | 98.04% (60 dupes) | ⚠️ Yes | — | Compliance & DPO |
+| 4b | Uniqueness | No duplicate customers (DOB + postcode) | **Gold** | 100% unique | **100%** | ✅ No | — | Compliance & DPO |
+| 5 | Referential integrity | Every claim must reference a valid policy | Bronze | 100% | 99% (8 orphaned) | ⚠️ Yes | CDE-09 | Claims |
+| 6 | Validity | Settled date must not precede incurred date | Bronze | 0 breaches | 5 illogical rows | ⚠️ Yes | — | Claims |
+| 7a | Consistency | Customer segment should be standardized | Bronze | 100% | 94.84% | ⚠️ Yes | — | Underwriting |
+| 7b | Consistency | Customer segment should be standardized | **Gold** | 100% | **100%** | ✅ No | — | Underwriting |
+| 8 | Validity | Claim amount must be positive | Bronze | 100% | 100% | ✅ No | CDE-07 | Claims |
 
 ---
 
@@ -38,6 +45,14 @@ measurable before/after improvement (duplicates 1.96% → 0%; segment consistenc
 94.84% → 100%). This is the single clearest piece of evidence in the whole
 project that the bronze → silver → gold pipeline does real, verifiable work,
 not just relabeling.
+
+**Every breach flagged above that involves a Critical Data Element has a
+corresponding entry in `data-issue-register.md`** — Rules 3 and 5 (postcode
+validity, referential integrity) map directly to ISSUE-01 and ISSUE-02, both
+tracked as open, owned, accepted-risk issues with a named remediation plan.
+Rules 4a and 7a's breaches at bronze correspond to ISSUE-03 and ISSUE-04,
+both already closed with validated remediation — the scorecard's bronze/gold
+comparison *is* the validation evidence cited in those closed issues.
 
 **Rules 1, 2, 3, 5, 6, and 8 are deliberately left unresolved through to gold**,
 per the Phase 2 design decision — these represent the category of data quality

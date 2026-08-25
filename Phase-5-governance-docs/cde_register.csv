@@ -1,0 +1,10 @@
+cde_id,business_domain,business_term,technical_table,technical_column,definition,data_owner,data_steward,sensitivity,quality_dimension,quality_threshold,latest_result_pct,meets_threshold,source_system,downstream_use
+CDE-01,Customer,Postcode,dim_customer,postcode,Customer's postal code,Compliance & DPO,Underwriting,High (PII),Validity,99,98.73,No,Azure SQL -> Fabric,"Correspondence, risk-based pricing"
+CDE-02,Customer,Date of Birth,dim_customer,date_of_birth,Customer's date of birth,Compliance & DPO,Underwriting,High (PII),"Completeness, Validity",100,100,Yes,Azure SQL -> Fabric,Age-based underwriting
+CDE-03,Customer,Email,dim_customer,email,Customer's contact email,Compliance & DPO,Underwriting,Medium (PII),Completeness,98,95.57,No,Azure SQL -> Fabric,Digital correspondence
+CDE-04,Policy,Gross Written Premium (source),dim_policy,annual_premium,Annual premium value per policy,Finance,Underwriting,None,Validity,100,100,Yes,Azure SQL -> Fabric,Gross Written Premium (glossary measure)
+CDE-05,Policy,Policy Status,dim_policy,status,Active / Lapsed / Cancelled,Underwriting,Underwriting,None,Validity,100,100,Yes,Azure SQL -> Fabric,Coverage determination
+CDE-06,Policy,Policy Start Date,dim_policy,policy_start_date,Date coverage begins,Underwriting,Underwriting,None,Validity,100,100,Yes,Azure SQL -> Fabric,Coverage window checks
+CDE-07,Claims,Claim Amount,fact_claims,claim_amount,Value of the claim,Claims,Claims,None,Validity,100,100,Yes,Fabric pipeline,"Loss Ratio, payout processing"
+CDE-08,Claims,Claim Status,fact_claims,claim_status,Open / Approved / Rejected / Paid,Claims,Claims,None,Validity,100,100,Yes,Fabric pipeline,Payment processing
+CDE-09,Claims,Policy Reference,fact_claims,policy_id,Links a claim to its policy,Claims,Claims,None,Referential Integrity,100,99,No,Fabric pipeline (ETL),Claims eligibility validation
